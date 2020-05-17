@@ -1,4 +1,8 @@
 import sys, pygame
+import tensorflow as tf
+import numpy as np
+from tkinter import *
+from tkinter import messagebox
 
 class pixel(object):
     def __init__(self, x, y, width, height):
@@ -106,6 +110,18 @@ class grid(object):
 
         return x_test[:1]
 
+def guess(li):
+    model = tf.keras.models.load_model('digits.model')
+
+    predictions = model.predict(li)
+    print(predictions[0])
+    t = (np.argmax(predictions[0]))
+    print("I predict this number is a:", t)
+    window = Tk()
+    window.withdraw()
+    messagebox.showinfo("Prediction", "I predict this number is a: " + str(t))
+
+
 def main():
     run = True
 
@@ -113,6 +129,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+            if event.type == pygame.KEYDOWN:
+                li = g.convert_binary()
+                guess(li)
+                g.generatePixels()
             if pygame.mouse.get_pressed()[0]:
 
                 pos = pygame.mouse.get_pos()
@@ -142,4 +162,3 @@ main()
 
 
 pygame.quit()
-quit()
